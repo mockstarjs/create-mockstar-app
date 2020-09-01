@@ -111,10 +111,6 @@ function init() {
   // registry.
   checkForLatestVersion('create-mockstar-app')
     .catch(() => {
-      console.log(
-        '--checkForLatestVersion catch--',
-        `耗时：${(Date.now() - checkBeginT) / 1000}s`
-      );
       try {
         return execSync('npm view create-mockstar-app version')
           .toString()
@@ -124,7 +120,11 @@ function init() {
       }
     })
     .then(latest => {
-      console.log(`检查新版本耗时：${(Date.now() - checkBeginT) / 1000}s`);
+      console.log(
+        `检查 create-mockstar-app 新版本耗时：${
+          (Date.now() - checkBeginT) / 1000
+        }s`
+      );
 
       if (latest && semver.lt(packageJson.version, latest)) {
         console.log();
