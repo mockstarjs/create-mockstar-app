@@ -12,7 +12,7 @@ const { initProject } = require('mockstar-generators');
 
 const packageJson = require('./package.json');
 
-const { checkForLatestVersion } = require('./utils');
+const { install, checkForLatestVersion } = require('./utils');
 
 let projectName;
 
@@ -153,7 +153,7 @@ function init() {
     });
 }
 
-function createApp(name) {
+function createApp(name, verbose) {
   const unsupportedNodeVersion = !semver.satisfies(process.version, '>=6');
   if (unsupportedNodeVersion) {
     console.log(
@@ -180,10 +180,24 @@ function createApp(name) {
     parentPath: originalDirectory,
     name: appName,
     port: 9527,
-    autoInstall: true,
+    autoInstall: false,
   })
     .then(async () => {
-      console.log(chalk.green(`Creating success.`));
+      console.log();
+      console.log(
+        `项目创建成功，接下来自动安装依赖(你也可以取消操作，进入 ${root} 目录手动运行：npm install)...`
+      );
+      console.log();
+      await install(root, false, false, [], verbose, false).then(() => {
+        console.log();
+        console.log(chalk.green(`恭喜！初始化成功，您可以运行命令：`));
+        console.log('    npm start: 启动 MockStar 服务');
+        console.log('    npm run stop: 停止 MockStar 服务');
+        console.log();
+        console.log('更多信息请查阅：https://mockstarjs.github.io/mockstar/');
+        console.log();
+      });
+      console.log();
     })
     .catch(err => {
       console.log();
