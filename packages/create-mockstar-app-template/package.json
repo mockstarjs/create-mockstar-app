@@ -1,0 +1,26 @@
+{
+  "name": "create-mockstar-app-template",
+  "version": "0.1.0",
+  "keywords": [
+    "mockstar",
+    "create-mockstar-app",
+    "template"
+  ],
+  "description": "The base template for Create MockStar App.",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/mockstarjs/create-mockstar-app.git",
+    "directory": "packages/create-mockstar-app-template"
+  },
+  "license": "MIT",
+  "engines": {
+    "node": ">=10"
+  },
+  "bugs": {
+    "url": "https://github.com/mockstarjs/create-mockstar-app/issues"
+  },
+  "files": [
+    "template",
+    "template.json"
+  ]
+}
