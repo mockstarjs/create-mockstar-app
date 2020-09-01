@@ -93,6 +93,12 @@ function init() {
     process.exit(1);
   }
 
+  console.log(
+    `Welcome use ${chalk.green(packageJson.name)} ${chalk.green(
+      'v' + packageJson.version
+    )} to creating a new MockStar app.`
+  );
+
   // We first check the registry directly via the API, and if that fails, we try
   // the slower `npm view [package] version` command.
   //
@@ -150,11 +156,7 @@ function createApp(name) {
 
   const root = path.resolve(name);
   console.log();
-  console.log(
-    `Using ${packageJson.name} v${
-      packageJson.version
-    } to creating a new MockStar app in ${chalk.green(root)}.`
-  );
+  console.log(`MockStar App will create at ${chalk.green(root)}.`);
   console.log();
 
   const appName = path.basename(root);
