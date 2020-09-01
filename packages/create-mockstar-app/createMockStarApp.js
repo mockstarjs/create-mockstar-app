@@ -99,6 +99,8 @@ function init() {
     )} to creating a new MockStar app.`
   );
 
+  const checkBeginT = Date.now();
+
   // We first check the registry directly via the API, and if that fails, we try
   // the slower `npm view [package] version` command.
   //
@@ -116,6 +118,8 @@ function init() {
       }
     })
     .then(latest => {
+      console.log(`检查新版本耗时：${(Date.now() - checkBeginT) / 1000}s`);
+
       if (latest && semver.lt(packageJson.version, latest)) {
         console.log();
         console.error(
