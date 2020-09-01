@@ -111,6 +111,10 @@ function init() {
   // registry.
   checkForLatestVersion('create-mockstar-app')
     .catch(() => {
+      console.log(
+        '--checkForLatestVersion catch--',
+        `耗时：${(Date.now() - checkBeginT) / 1000}s`
+      );
       try {
         return execSync('npm view create-mockstar-app version')
           .toString()
