@@ -5,14 +5,21 @@ const commander = require('commander');
 const envinfo = require('envinfo');
 const execSync = require('child_process').execSync;
 const fs = require('fs-extra');
+const os = require('os');
 const path = require('path');
 const semver = require('semver');
 const validateProjectName = require('validate-npm-package-name');
-const { initProject } = require('mockstar-generators');
 
 const packageJson = require('./package.json');
 
-const { checkForLatestVersion } = require('./utils');
+const {
+  install,
+  checkNpmVersion,
+  isSafeToCreateProjectIn,
+  checkThatNpmCanReadCwd,
+  executeNodeScript,
+  checkForLatestVersion,
+} = require('./utils');
 
 let projectName;
 
@@ -137,48 +144,106 @@ function init() {
     });
 }
 
-function createApp(name) {
-  const unsupportedNodeVersion = !semver.satisfies(process.version, '>=6');
+function createApp(name, verbose) {
+  const unsupportedNodeVersion = !semver.satisfies(process.version, '>=8');
   if (unsupportedNodeVersion) {
     console.log(
       chalk.yellow(
         `You are using Node ${process.version} so the project will be bootstrapped with an old unsupported version of tools.\n\n` +
-          `Please update to Node 6 or higher for a better, fully supported experience.\n`
+          `Please update to Node 8 or higher for a better, fully supported experience.\n`
       )
     );
   }
 
   const root = path.resolve(name);
-  console.log();
-  console.log(
-    `Using ${packageJson.name} v${
-      packageJson.version
-    } to creating a new MockStar app in ${chalk.green(root)}.`
-  );
-  console.log();
-
   const appName = path.basename(root);
+
+  // 创建 mockstar-app 文件夹目录
   checkAppName(appName);
+  fs.ensureDirSync(name);
+  if (!isSafeToCreateProjectIn(root, name)) {
+    process.exit(1);
+  }
+  console.log();
+  console.log(`Creating a new MockStar app in ${chalk.green(root)}.`);
+  console.log();
 
+  // 创建 mockstar-app 的 package.json
+  const packageJson = {
+    name: appName,
+    version: '0.1.0',
+    private: true,
+    dependencies: {
+      'mockstar-generators': 'latest',
+    },
+  };
+  fs.writeFileSync(
+    path.join(root, 'package.json'),
+    JSON.stringify(packageJson, null, 2) + os.EOL
+  );
+
+  const useYarn = false;
   const originalDirectory = process.cwd();
+  process.chdir(root);
+  if (!useYarn && !checkThatNpmCanReadCwd()) {
+    process.exit(1);
+  }
 
-  initProject({
+  if (!useYarn) {
+    const npmInfo = checkNpmVersion();
+    if (!npmInfo.hasMinNpm) {
+      if (npmInfo.npmVersion) {
+        console.log(
+          chalk.yellow(
+            `You are using npm ${npmInfo.npmVersion} so the project will be bootstrapped with an old unsupported version of tools.\n\n` +
+              `Please update to npm 6 or higher for a better, fully supported experience.\n`
+          )
+        );
+      }
+    }
+  }
+
+  // 安装当前的 package.json 依赖
+
+  install(root, useYarn, false, [], verbose, false)
+    .then(() => {
+      // 移除临时的 package.json
+      fs.removeSync(path.join(root, 'package.json'));
+
+      // 移除临时的 package-lock.json
+      fs.removeSync(path.join(root, 'package-lock.json'));
+    })
+    .then(async () => {
+      await executeNodeScript(
+        {
+          cwd: process.cwd(),
+          args: [],
+        },
+        [root, appName, verbose, originalDirectory],
+        `
+const { initProject } = require('mockstar-generators');
+(async () => {
+  await initProject({
     isDev: false,
     force: true,
-    parentPath: originalDirectory,
-    name: appName,
+    parentPath: '${originalDirectory}',
+    name: '${appName}',
     port: 9527,
     autoInstall: true,
-  })
-    .then(async () => {
-      console.log(chalk.green(`Creating success.`));
-    })
-    .catch(err => {
-      console.log();
-      console.log(
-        'Aborting installation because: ' + ((err && err.message) || err)
+  });
+})();
+      `
       );
-      console.log(chalk.red('Please report it as a bug!'));
+    })
+    .catch(reason => {
+      console.log();
+      console.log('Aborting installation.');
+      if (reason.command) {
+        console.log(`  ${chalk.cyan(reason.command)} has failed.`);
+      } else {
+        console.log(chalk.red('Unexpected error. Please report it as a bug:'));
+        console.log(reason);
+      }
       console.log();
 
       // On 'exit' we will delete these files from target directory.
