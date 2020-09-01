@@ -93,11 +93,13 @@ function init() {
     process.exit(1);
   }
 
+  console.log();
   console.log(
     `Welcome use ${chalk.green(packageJson.name)} ${chalk.green(
       'v' + packageJson.version
     )} to creating a new MockStar app.`
   );
+  console.log();
 
   const checkBeginT = Date.now();
 
