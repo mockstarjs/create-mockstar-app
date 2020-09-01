@@ -20,6 +20,7 @@
   "files": [
     "index.js",
     "createMockStarApp.js",
+    "utils.js",
     "yarn.lock.cached"
   ],
   "bin": {
