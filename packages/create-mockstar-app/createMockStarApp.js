@@ -181,6 +181,13 @@ function createApp(name, verbose) {
     name: appName,
     port: 9527,
     autoInstall: false,
+    readmeDesc: `
+本项目是由 [create-mockstar-app](https://www.npmjs.com/package/create-mockstar-app) 的基础模板初始化生成，相应的初始化命令如下：
+
+\`\`\`
+$ npx create-mockstar-app ${appName} 
+\`\`\`
+`,
   })
     .then(async () => {
       console.log();
@@ -188,6 +195,7 @@ function createApp(name, verbose) {
         `项目创建成功，接下来自动安装依赖(你也可以取消操作，进入 ${root} 目录手动运行：npm install)...`
       );
       console.log();
+
       await install(root, false, false, [], verbose, false).then(() => {
         console.log();
         console.log(chalk.green(`恭喜！初始化成功，您可以运行命令：`));
