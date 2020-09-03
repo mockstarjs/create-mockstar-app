@@ -480,6 +480,12 @@ function executeNodeScript({ cwd, args }, data, source) {
 }
 
 function checkForLatestVersion(packageName) {
+  // We first check the registry directly via the API, and if that fails, we try
+  // the slower `npm view [package] version` command.
+  //
+  // This is important for users in environments where direct access to npm is
+  // blocked by a firewall, and packages are provided exclusively via a private
+  // registry.
   return new Promise((resolve, reject) => {
     let isReturn = false;
 
@@ -511,6 +517,12 @@ function checkForLatestVersion(packageName) {
         reject('Timeout!!');
       }
     }, 2000);
+  }).catch(() => {
+    try {
+      return execSync(`npm view ${packageName} version`).toString().trim();
+    } catch (e) {
+      return null;
+    }
   });
 }
 

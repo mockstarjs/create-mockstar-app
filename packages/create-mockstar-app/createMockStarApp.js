@@ -3,7 +3,6 @@
 const chalk = require('chalk');
 const commander = require('commander');
 const envinfo = require('envinfo');
-const execSync = require('child_process').execSync;
 const fs = require('fs-extra');
 const path = require('path');
 const semver = require('semver');
@@ -32,16 +31,16 @@ function init() {
     .allowUnknownOption()
     .on('--help', () => {
       console.log(
-        `    Only ${chalk.green('<project-directory>')} is required.`
+        `    Only ${chalk.green('<project-directory>')} is required.`,
       );
       console.log();
       console.log(
-        `    If you have any problems, do not hesitate to file an issue:`
+        `    If you have any problems, do not hesitate to file an issue:`,
       );
       console.log(
         `      ${chalk.cyan(
-          'https://github.com/mockstarjs/create-mockstar-app/issues/new'
-        )}`
+          'https://github.com/mockstarjs/create-mockstar-app/issues/new',
+        )}`,
       );
       console.log();
     })
@@ -50,7 +49,7 @@ function init() {
   if (program.info) {
     console.log(chalk.bold('\nEnvironment Info:'));
     console.log(
-      `\n  current version of ${packageJson.name}: ${packageJson.version}`
+      `\n  current version of ${packageJson.name}: ${packageJson.version}`,
     );
     console.log(`  running from ${__dirname}`);
     return envinfo
@@ -71,7 +70,7 @@ function init() {
         {
           duplicates: true,
           showNotFound: true,
-        }
+        },
       )
       .then(console.log);
   }
@@ -79,16 +78,16 @@ function init() {
   if (typeof projectName === 'undefined') {
     console.error('Please specify the project directory:');
     console.log(
-      `  ${chalk.cyan(program.name())} ${chalk.green('<project-directory>')}`
+      `  ${chalk.cyan(program.name())} ${chalk.green('<project-directory>')}`,
     );
     console.log();
     console.log('For example:');
     console.log(
-      `  ${chalk.cyan(program.name())} ${chalk.green('mockstar-app')}`
+      `  ${chalk.cyan(program.name())} ${chalk.green('mockstar-app')}`,
     );
     console.log();
     console.log(
-      `Run ${chalk.cyan(`${program.name()} --help`)} to see all options.`
+      `Run ${chalk.cyan(`${program.name()} --help`)} to see all options.`,
     );
     process.exit(1);
   }
@@ -96,61 +95,43 @@ function init() {
   console.log();
   console.log(
     `Welcome use ${chalk.green(packageJson.name)} ${chalk.green(
-      'v' + packageJson.version
-    )} to creating a new MockStar app.`
+      'v' + packageJson.version,
+    )} to creating a new MockStar app.`,
   );
   console.log();
 
+  console.log('Checking latest version...');
   const checkBeginT = Date.now();
+  checkForLatestVersion('create-mockstar-app').then(latest => {
+    console.log(
+      `Check latest version complete(${(Date.now() - checkBeginT) / 1000}s) ! The latest version is ${latest}`,
+    );
 
-  // We first check the registry directly via the API, and if that fails, we try
-  // the slower `npm view [package] version` command.
-  //
-  // This is important for users in environments where direct access to npm is
-  // blocked by a firewall, and packages are provided exclusively via a private
-  // registry.
-  checkForLatestVersion('create-mockstar-app')
-    .catch(() => {
-      try {
-        return execSync('npm view create-mockstar-app version')
-          .toString()
-          .trim();
-      } catch (e) {
-        return null;
-      }
-    })
-    .then(latest => {
-      console.log(
-        `检查 create-mockstar-app 新版本耗时：${
-          (Date.now() - checkBeginT) / 1000
-        }s`
+    if (latest && semver.lt(packageJson.version, latest)) {
+      console.log();
+      console.error(
+        chalk.yellow(
+          `You are running \`create-mockstar-app\` ${packageJson.version}, which is behind the latest release (${latest}).\n\n` +
+          'We no longer support global installation of Create MockStar App.',
+        ),
       );
-
-      if (latest && semver.lt(packageJson.version, latest)) {
-        console.log();
-        console.error(
-          chalk.yellow(
-            `You are running \`create-mockstar-app\` ${packageJson.version}, which is behind the latest release (${latest}).\n\n` +
-              'We no longer support global installation of Create MockStar App.'
-          )
-        );
-        console.log();
-        console.log(
-          'Please remove any global installs with one of the following commands:\n' +
-            '- npm uninstall -g create-mockstar-app\n' +
-            '- yarn global remove create-mockstar-app'
-        );
-        console.log();
-        // console.log(
-        //   'The latest instructions for creating a new app can be found here:\n' +
-        //     'https://create-mockstar-app.dev/docs/getting-started/'
-        // );
-        // console.log();
-        process.exit(1);
-      } else {
-        createApp(projectName, program.verbose);
-      }
-    });
+      console.log();
+      console.log(
+        'Please remove any global installs with one of the following commands:\n' +
+        '- npm uninstall -g create-mockstar-app\n' +
+        '- yarn global remove create-mockstar-app',
+      );
+      console.log();
+      // console.log(
+      //   'The latest instructions for creating a new app can be found here:\n' +
+      //     'https://create-mockstar-app.dev/docs/getting-started/'
+      // );
+      // console.log();
+      process.exit(1);
+    } else {
+      createApp(projectName, program.verbose);
+    }
+  });
 }
 
 function createApp(name, verbose) {
@@ -159,8 +140,8 @@ function createApp(name, verbose) {
     console.log(
       chalk.yellow(
         `You are using Node ${process.version} so the project will be bootstrapped with an old unsupported version of tools.\n\n` +
-          `Please update to Node 6 or higher for a better, fully supported experience.\n`
-      )
+        `Please update to Node 6 or higher for a better, fully supported experience.\n`,
+      ),
     );
   }
 
@@ -191,18 +172,24 @@ $ npx create-mockstar-app ${appName}
   })
     .then(async () => {
       console.log();
-      console.log(
-        `项目创建成功，接下来自动安装依赖(你也可以取消操作，进入 ${root} 目录手动运行：npm install)...`
-      );
+      console.log(`Create success! Next to install dependencies. Also, you can cancel it and install by manual: `);
+      console.log(`    cd ${root} && npm install`);
+      console.log();
+      console.log(`Here are some commands: `);
+      console.log('    npm run start: star MockStar server');
+      console.log('    npm run stop: stop MockStar server');
+      console.log();
+      console.log(chalk.green('For more info：https://mockstarjs.github.io/mockstar/'));
       console.log();
 
       await install(root, false, false, [], verbose, false).then(() => {
         console.log();
-        console.log(chalk.green(`恭喜！初始化成功，您可以运行命令：`));
-        console.log('    npm start: 启动 MockStar 服务');
-        console.log('    npm run stop: 停止 MockStar 服务');
+        console.log(chalk.green(`Congratulation! All dependencies success installed!`));
+        console.log(`Here are some commands: `);
+        console.log('    npm run start: star MockStar server');
+        console.log('    npm run stop: stop MockStar server');
         console.log();
-        console.log('更多信息请查阅：https://mockstarjs.github.io/mockstar/');
+        console.log(chalk.green('For more info：https://mockstarjs.github.io/mockstar/'));
         console.log();
       });
       console.log();
@@ -210,7 +197,7 @@ $ npx create-mockstar-app ${appName}
     .catch(err => {
       console.log();
       console.log(
-        'Aborting installation because: ' + ((err && err.message) || err)
+        'Aborting installation because: ' + ((err && err.message) || err),
       );
       console.log(chalk.red('Please report it as a bug!'));
       console.log();
@@ -232,8 +219,8 @@ $ npx create-mockstar-app ${appName}
         // Delete target folder if empty
         console.log(
           `Deleting ${chalk.cyan(`${appName}/`)} from ${chalk.cyan(
-            path.resolve(root, '..')
-          )}`
+            path.resolve(root, '..'),
+          )}`,
         );
         process.chdir(path.resolve(root, '..'));
         fs.removeSync(path.join(root));
@@ -249,9 +236,9 @@ function checkAppName(appName) {
     console.error(
       chalk.red(
         `Cannot create a project named ${chalk.green(
-          `"${appName}"`
-        )} because of npm naming restrictions:\n`
-      )
+          `"${appName}"`,
+        )} because of npm naming restrictions:\n`,
+      ),
     );
     [
       ...(validationResult.errors || []),
@@ -269,12 +256,12 @@ function checkAppName(appName) {
     console.error(
       chalk.red(
         `Cannot create a project named ${chalk.green(
-          `"${appName}"`
+          `"${appName}"`,
         )} because a dependency with the same name exists.\n` +
-          `Due to the way npm works, the following names are not allowed:\n\n`
+        `Due to the way npm works, the following names are not allowed:\n\n`,
       ) +
-        chalk.cyan(dependencies.map(depName => `  ${depName}`).join('\n')) +
-        chalk.red('\n\nPlease choose a different project name.')
+      chalk.cyan(dependencies.map(depName => `  ${depName}`).join('\n')) +
+      chalk.red('\n\nPlease choose a different project name.'),
     );
     process.exit(1);
   }
