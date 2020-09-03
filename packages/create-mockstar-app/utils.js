@@ -61,7 +61,7 @@ function install(root, useYarn, usePnp, dependencies, verbose, isOnline) {
       ].concat(dependencies);
 
       if (usePnp) {
-        console.log(chalk.yellow("NPM doesn't support PnP."));
+        console.log(chalk.yellow('NPM doesn\'t support PnP.'));
         console.log(chalk.yellow('Falling back to the regular installs.'));
         console.log();
       }
@@ -117,7 +117,7 @@ function extractStream(stream, dest) {
         } else {
           resolve(dest);
         }
-      })
+      }),
     );
   });
 }
@@ -138,7 +138,7 @@ function getPackageInfo(installPackage) {
       .then(obj => {
         const { name, version } = require(path.join(
           obj.tmpdir,
-          'package.json'
+          'package.json',
         ));
         obj.cleanup();
         return { name, version };
@@ -147,15 +147,15 @@ function getPackageInfo(installPackage) {
         // The package name could be with or without semver version, e.g. react-scripts-0.2.0-alpha.1.tgz
         // However, this function returns package name only without semver version.
         console.log(
-          `Could not extract the package name from the archive: ${err.message}`
+          `Could not extract the package name from the archive: ${err.message}`,
         );
         const assumedProjectName = installPackage.match(
-          /^.+\/(.+?)(?:-\d+.+)?\.(tgz|tar\.gz)$/
+          /^.+\/(.+?)(?:-\d+.+)?\.(tgz|tar\.gz)$/,
         )[1];
         console.log(
           `Based on the filename, assuming it is "${chalk.cyan(
-            assumedProjectName
-          )}"`
+            assumedProjectName,
+          )}"`,
         );
         return Promise.resolve({ name: assumedProjectName });
       });
@@ -176,7 +176,7 @@ function getPackageInfo(installPackage) {
     const installPackagePath = installPackage.match(/^file:(.*)?$/)[1];
     const { name, version } = require(path.join(
       installPackagePath,
-      'package.json'
+      'package.json',
     ));
     return Promise.resolve({ name, version });
   }
@@ -235,7 +235,7 @@ function checkNodeVersion(packageName) {
     process.cwd(),
     'node_modules',
     packageName,
-    'package.json'
+    'package.json',
   );
 
   if (!fs.existsSync(packageJsonPath)) {
@@ -251,11 +251,11 @@ function checkNodeVersion(packageName) {
     console.error(
       chalk.red(
         'You are running Node %s.\n' +
-          'Create MockStar App requires Node %s or higher. \n' +
-          'Please update your version of Node.'
+        'Create MockStar App requires Node %s or higher. \n' +
+        'Please update your version of Node.',
       ),
       process.version,
-      packageJson.engines.node
+      packageJson.engines.node,
     );
     process.exit(1);
   }
@@ -274,8 +274,8 @@ function makeCaretRange(dependencies, name) {
   if (!semver.validRange(patchedVersion)) {
     console.error(
       `Unable to patch ${name} dependency version because version ${chalk.red(
-        version
-      )} will become invalid ${chalk.red(patchedVersion)}`
+        version,
+      )} will become invalid ${chalk.red(patchedVersion)}`,
     );
     patchedVersion = version;
   }
@@ -328,7 +328,7 @@ function isSafeToCreateProjectIn(root, name) {
 
   if (conflicts.length > 0) {
     console.log(
-      `The directory ${chalk.green(name)} contains files that could conflict:`
+      `The directory ${chalk.green(name)} contains files that could conflict:`,
     );
     console.log();
     for (const file of conflicts) {
@@ -345,7 +345,7 @@ function isSafeToCreateProjectIn(root, name) {
     }
     console.log();
     console.log(
-      'Either try using a new directory name, or remove the files listed above.'
+      'Either try using a new directory name, or remove the files listed above.',
     );
 
     return false;
@@ -411,26 +411,26 @@ function checkThatNpmCanReadCwd() {
   console.error(
     chalk.red(
       `Could not start an npm process in the right directory.\n\n` +
-        `The current directory is: ${chalk.bold(cwd)}\n` +
-        `However, a newly started npm process runs in: ${chalk.bold(
-          npmCWD
-        )}\n\n` +
-        `This is probably caused by a misconfigured system terminal shell.`
-    )
+      `The current directory is: ${chalk.bold(cwd)}\n` +
+      `However, a newly started npm process runs in: ${chalk.bold(
+        npmCWD,
+      )}\n\n` +
+      `This is probably caused by a misconfigured system terminal shell.`,
+    ),
   );
   if (process.platform === 'win32') {
     console.error(
       chalk.red(`On Windows, this can usually be fixed by running:\n\n`) +
-        `  ${chalk.cyan(
-          'reg'
-        )} delete "HKCU\\Software\\Microsoft\\Command Processor" /v AutoRun /f\n` +
-        `  ${chalk.cyan(
-          'reg'
-        )} delete "HKLM\\Software\\Microsoft\\Command Processor" /v AutoRun /f\n\n` +
-        chalk.red(`Try to run the above two lines in the terminal.\n`) +
-        chalk.red(
-          `To learn more about this problem, read: https://blogs.msdn.microsoft.com/oldnewthing/20071121-00/?p=24433/`
-        )
+      `  ${chalk.cyan(
+        'reg',
+      )} delete "HKCU\\Software\\Microsoft\\Command Processor" /v AutoRun /f\n` +
+      `  ${chalk.cyan(
+        'reg',
+      )} delete "HKLM\\Software\\Microsoft\\Command Processor" /v AutoRun /f\n\n` +
+      chalk.red(`Try to run the above two lines in the terminal.\n`) +
+      chalk.red(
+        `To learn more about this problem, read: https://blogs.msdn.microsoft.com/oldnewthing/20071121-00/?p=24433/`,
+      ),
     );
   }
   return false;
@@ -464,7 +464,7 @@ function executeNodeScript({ cwd, args }, data, source) {
     const child = spawn(
       process.execPath,
       [...args, '-e', source, '--', JSON.stringify(data)],
-      { cwd, stdio: 'inherit' }
+      { cwd, stdio: 'inherit' },
     );
 
     child.on('close', code => {
@@ -504,7 +504,7 @@ function checkForLatestVersion(packageName) {
           }
 
           isReturn = true;
-        }
+        },
       )
       .on('error', () => {
         isReturn = true;
@@ -516,13 +516,25 @@ function checkForLatestVersion(packageName) {
         isReturn = true;
         reject('Timeout!!');
       }
-    }, 2000);
+    }, 1500);
   }).catch(() => {
-    try {
-      return execSync(`npm view ${packageName} version`).toString().trim();
-    } catch (e) {
-      return null;
-    }
+    return new Promise((resolve) => {
+      let isReturn = false;
+
+      setTimeout(() => {
+        if (!isReturn) {
+          isReturn = true;
+          resolve(null);
+        }
+      }, 1500);
+
+      try {
+        resolve(execSync(`npm view ${packageName} version`).toString().trim());
+        isReturn = true;
+      } catch (e) {
+        resolve(null);
+      }
+    });
   });
 }
 
