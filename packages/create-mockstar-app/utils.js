@@ -517,24 +517,17 @@ function checkForLatestVersion(packageName) {
         reject('Timeout!!');
       }
     }, 1500);
+
   }).catch(() => {
-    return new Promise((resolve) => {
-      let isReturn = false;
-
-      setTimeout(() => {
-        if (!isReturn) {
-          isReturn = true;
-          resolve(null);
-        }
-      }, 1500);
-
+    try {
+      return execSync(`npm view ${packageName} version`, { timeout: 1500 }).toString().trim();
+    } catch (e) {
       try {
-        resolve(execSync(`npm view ${packageName} version`).toString().trim());
-        isReturn = true;
+        return execSync(`tnpm view ${packageName} version`, { timeout: 1500 }).toString().trim();
       } catch (e) {
-        resolve(null);
+        return null;
       }
-    });
+    }
   });
 }
 

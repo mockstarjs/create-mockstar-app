@@ -104,7 +104,7 @@ function init() {
   const checkBeginT = Date.now();
   checkForLatestVersion('create-mockstar-app').then(latest => {
     console.log(
-      `Check latest version complete(${(Date.now() - checkBeginT) / 1000}s) ! The latest version is ${latest}`,
+      `Check latest version complete(${(Date.now() - checkBeginT) / 1000}s) ! The latest version is ${chalk.green(latest)} .`,
     );
 
     if (latest && semver.lt(packageJson.version, latest)) {
