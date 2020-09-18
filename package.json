@@ -15,7 +15,9 @@
     "url": "git+https://github.com/mockstarjs/create-mockstar-app.git"
   },
   "keywords": [
-    "mockstar"
+    "mockstar",
+    "mock-server",
+    "mock"
   ],
   "author": "helinjiang",
   "license": "MIT",

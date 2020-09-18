@@ -9,4 +9,4 @@
 $ npx create-mockstar-app mockstar-app
 ```
 
-初始化之后的项目内容可以参考 [demo/mockstar-app](./demo/mockstar-app) ，该项目是可以独立运行使用的。
+初始化之后的项目内容可以参考 [demo/mockstar-app](https://github.com/mockstarjs/create-mockstar-app/tree/master/demo/mockstar-app) ，该项目是可以独立运行使用的。
