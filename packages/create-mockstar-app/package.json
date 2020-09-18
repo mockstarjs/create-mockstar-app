@@ -2,7 +2,9 @@
   "name": "create-mockstar-app",
   "version": "0.1.10",
   "keywords": [
-    "react"
+    "mockstar",
+    "mock-server",
+    "mock"
   ],
   "description": "Create MockStar apps with no build configuration.",
   "repository": {
@@ -12,7 +14,7 @@
   },
   "license": "MIT",
   "engines": {
-    "node": ">=10"
+    "node": ">=8"
   },
   "bugs": {
     "url": "https://github.com/mockstarjs/create-mockstar-app/issues"
