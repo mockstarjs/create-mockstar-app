@@ -43,6 +43,8 @@ function init() {
         )}`,
       );
       console.log();
+      console.log(chalk.green('    For more info：https://mockstarjs.github.io/mockstar/tool/create-mockstar-app.html'));
+      console.log();
     })
     .parse(process.argv);
 
@@ -176,20 +178,20 @@ $ npx create-mockstar-app ${appName}
       console.log(`    cd ${root} && npm install`);
       console.log();
       console.log(`Here are some commands: `);
-      console.log('    npm run start: star MockStar server');
+      console.log('    npm run start: start MockStar server');
       console.log('    npm run stop: stop MockStar server');
       console.log();
-      console.log(chalk.green('For more info：https://mockstarjs.github.io/mockstar/'));
+      console.log(chalk.green('For more info：https://mockstarjs.github.io/mockstar/tool/create-mockstar-app.html'));
       console.log();
 
       await install(root, false, false, [], verbose, false).then(() => {
         console.log();
         console.log(chalk.green(`Congratulation! All dependencies success installed!`));
         console.log(`Here are some commands: `);
-        console.log('    npm run start: star MockStar server');
+        console.log('    npm run start: start MockStar server');
         console.log('    npm run stop: stop MockStar server');
         console.log();
-        console.log(chalk.green('For more info：https://mockstarjs.github.io/mockstar/'));
+        console.log(chalk.green('For more info：https://mockstarjs.github.io/mockstar/tool/create-mockstar-app.html'));
         console.log();
       });
       console.log();
